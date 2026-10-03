@@ -1,69 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><style>
-    html, body {
-        min-height: 100%;
-        background: #121212;
-        color: #f3ebeb;
-    }
-    body 
-{       
-        font-family: Roboto, sans-serif;
-       text-align: center;
-        margin: 0;
-       padding: 40px 20px;
-       
-    }
-    h1 { font-size: 36px;
-        color: #cb3131
-    }
-    .card {
-        padding: 24px;;
-        
-        color: #efd45b;
-       
-    }
-    video {
-        display:block;
-        width:100%;
-        max-width: 480px;
-        margin:24px auto;
-        border: 2px solid #42d4d4;
-        border-radius: 12px;
-        background: #222;
+    :root {
+  color-scheme: dark;
+  --page-bg: #080808;
+  --panel-bg: rgba(28, 28, 28, 0.92);
+  --text: #f2f2f2;
+  --muted: #a5a5a5;
+  --cyan: #e2e2e2;
+  --blue: #888888;
+}
 
-    }
-    button {
-        padding: 12px 18px;
-        margin:6px;
-        border:0;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-    .camera-box {
-        position:relative;
-        width:100%;
-        max-width:720px;
-        margin:24px auto;
+* {
+  box-sizing: border-box;
+}
 
-    }
-    .camera-box video, .camera-box canvas {
-        display:block;
-        width:100%;
-        border-radius:12px;
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
 
-    }
-    .camera-box canvas{
-        position:absolute;
-        inset:0;
-        pointer-events:none;
-    }
-    .camera-box video{
-        margin:0;
-        max-width:none;
-        box-sizing:border-box;
-    }
+body {
+  position: relative;
+  isolation: isolate;
+  overflow-x: hidden;
+  padding: clamp(32px, 7vw, 76px) 18px;
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  text-align: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #1b1b1b 0%, transparent 55%),
+    var(--page-bg);
+}
+
+/* Subtle technical grid behind the content */
+body::before {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 36px 36px;
+  content: "";
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, black, transparent 82%);
+}
+
+body > h1 {
+  margin: 0;
+  color: #f5f8ff;
+  font-size: clamp(42px, 8vw, 76px);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.04);
+}
+
+body > p {
+  margin: 12px 0 30px;
+  color: var(--muted);
+  font-size: clamp(15px, 2vw, 18px);
+  letter-spacing: 0.04em;
+}
+
+.card {
+  width: min(100%, 920px);
+  margin: 0 auto;
+  padding: clamp(16px, 4vw, 34px);
+  border: 1px solid rgba(170, 195, 227, 0.2);
+  border-radius: 24px;
+  background: linear-gradient(
+    145deg,
+    rgba(136, 138, 141, 0.94),
+    var(--panel-bg)
+  );
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.42),
+    0 0 45px rgba(232, 199, 199, 0.06);
+  backdrop-filter: blur(14px);
+}
+
+.camera-box {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto 22px;
+  overflow: hidden;
+  border: 1px solid rgba(85, 230, 224, 0.65);
+  border-radius: 18px;
+  background: #05080d;
+  box-shadow:
+    0 0 0 4px rgba(85, 230, 224, 0.06),
+    0 0 30px rgba(85, 230, 224, 0.1);
+}
+
+.camera-box video {
+  display: block;
+  width: 100%;
+  max-width: none;
+  height: auto;
+  margin: 0;
+  border: 0;
+  border-radius: inherit;
+  background: #05080d;
+}
+
+.camera-box canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+button {
+  margin: 6px;
+  padding: 13px 22px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+button:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+
+button:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
+
+#startButton {
+  color: #061315;
+  background: linear-gradient(135deg, var(--cyan), #8bfff0);
+  box-shadow: 0 8px 24px rgba(85, 230, 224, 0.18);
+}
+
+#startButton:not(:disabled):hover {
+  box-shadow: 0 10px 30px rgba(85, 230, 224, 0.32);
+}
+
+#stopButton {
+  border-color: rgba(255, 255, 255, 0.14);
+  color: var(--text);
+  background: #202b3b;
+}
+
+button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+#Status,
+#gestureStatus,
+#demoMessage {
+  width: fit-content;
+  max-width: 100%;
+  margin: 12px auto;
+  padding: 10px 15px;
+  border: 1px solid rgba(131, 161, 201, 0.16);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(7, 12, 20, 0.68);
+  font-size: 14px;
+}
+
+#gestureStatus {
+  border-color: rgba(102, 133, 255, 0.3);
+  color: #c3ceff;
+}
+
+#demoMessage {
+  border-color: rgba(85, 230, 224, 0.32);
+  color: var(--cyan);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .camera-box {
+    border-radius: 14px;
+  }
+
+  button {
+    width: min(100%, 250px);
+  }
+}
 </style>
 
 
@@ -74,13 +213,13 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign to Text</title>
+    <title>X-BOT</title>
 </head>
 
 
 <body> 
-    <h1><b>Sign to Text</b></h1>
-    <p>Convert sign language to text in real-time.</p>
+    <h1><b>X-BOT</b></h1>
+    <p>Your Real Time Assistant.</p>
 
 
 
@@ -89,12 +228,19 @@
     <div class="camera-box">
        <video id="camera" autoplay playsinline ></video>
        <canvas id="overlay"></canvas>
+       
     </div>
     <div>
        <button id="startButton" disabled>Loading tracker...</button>
         <button id="stopButton" disabled>Stop Camera</button>
     </div>
-    <p id="Status">Camera is off.</p>
+    <audio id="music" preload = "metadata" hidden >
+      <source src="./assets/LONOWN%20-%20worry%20(super%20slowed).mp3" type="audio/mpeg">
+    </audio>
+    <p id="demoMessage" hidden></p>
+     <p id="Status">Camera is off.</p>
+    <p id="gestureStatus">Pose: waiting for a hand</p>
+
     
 </main>
 
@@ -108,17 +254,151 @@
   const canvas = document.getElementById("overlay");
   const context = canvas.getContext("2d");
   const video = document.getElementById("camera");
-  const status = document.getElementById("Status");
+  const Status = document.getElementById("Status");
+  const music = document.getElementById("music");
+  const demoMessage = document.getElementById("demoMessage");
+  const gestureStatus = document.getElementById("gestureStatus");
+  let lastCommandGesture = "";
+  let wasPinched = false;
+  let lastPinchTime = 0;
+  let swipeStartX = null;
+  let swipeStartTime =  0;
+  let lastSwipeTime = 0;
+  function classifyHand(hand) {
+  const fingers = [
+    [8, 6],   // Index finger
+    [12, 10], // Middle finger
+    [16, 14], // Ring finger
+    [20, 18]  // Pinky finger
+  ];
+
+  let extendedCount = 0;
+
+  for (const [tipIndex, jointIndex] of fingers) {
+    if (hand[tipIndex].y < hand[jointIndex].y) {
+      extendedCount++;
+    }
+  }
+
+  if (extendedCount >= 3) return "Open hand";
+  if (extendedCount <= 1) return "Fist";
+  return "In between";
+}
+
+function isPinched(hand) {
+  const thumbTip = hand[4];
+  const indexTip = hand[8];
+
+  const tipGap = Math.hypot(
+    thumbTip.x - indexTip.x,
+    thumbTip.y - indexTip.y
+  );
+
+  const palmWidth = Math.hypot(
+    hand[5].x - hand[17].x,
+    hand[5].y - hand[17].y
+  );
+
+  return tipGap < palmWidth * 0.3;
+}
+
+function checkForDoublePinch(hand) {
+  const pinched = isPinched(hand);
+  const newPinch = pinched && !wasPinched;
+  wasPinched = pinched;
+
+  if (!newPinch) return false;
+
+  const now = performance.now();
+
+  if (lastPinchTime !== 0 && now - lastPinchTime <= 1200) {
+    lastPinchTime = 0;
+    return true;
+  }
+
+  lastPinchTime = now;
+  gestureStatus.textContent = "Pinch once more to stop the camera.";
+  return false;
+}
+function detectSwipe(hand) {
+  const now = performance.now();
+
+  // Require both the index and middle fingers to be extended.
+  const indexExtended = hand[8].y < hand[6].y;
+  const middleExtended = hand[12].y < hand[10].y;
+
+  if (!indexExtended || !middleExtended) {
+    swipeStartX = null;
+    return null;
+  }
+
+  // Track the average horizontal position of the two fingertips.
+  const fingerCenterX = (hand[8].x + hand[12].x) / 2;
+
+  if (now - lastSwipeTime < 900) {
+    swipeStartX = null;
+    return null;
+  }
+
+  if (swipeStartX === null) {
+    swipeStartX = fingerCenterX;
+    swipeStartTime = now;
+    return null;
+  }
+
+  const movement = fingerCenterX - swipeStartX;
+  const elapsed = now - swipeStartTime;
+
+  if (elapsed > 500) {
+    swipeStartX = fingerCenterX;
+    swipeStartTime = now;
+    return null;
+  }
+
+  if (Math.abs(movement) >= 0.20) {
+    lastSwipeTime = now;
+    swipeStartX = null;
+    return movement > 0 ? "Swipe right" : "Swipe left";
+  }
+
+  return null;
+}
+
   const startButton = document.getElementById("startButton");
   const stopButton = document.getElementById("stopButton");
+  const connections = [
+  [0, 1], [1, 2], [2, 3], [3, 4],
+  [0, 5], [5, 6], [6, 7], [7, 8],
+  [0, 9], [9, 10], [10, 11], [11, 12],
+  [0, 13], [13, 14], [14, 15], [15, 16],
+  [0, 17], [17, 18], [18, 19], [19, 20],
+  [5, 9], [9, 13], [13, 17]
+];
 
+  
   let cameraStream = null;
   let handLandmarker = null;
   let frameRequest = null;
   let lastVideoTime = -1;
+  let candidateGesture = "";
+  let candidateCount = 0;
+  let stableGesture = "Waiting for a hand";
+  const stableFramesRequired = 12; // Number of consecutive frames required to confirm a gesture
 
+  function stabilizeGesture(gesture){
+    if(gesture === candidateGesture){
+      candidateCount++;
+    }else{
+      candidateGesture = gesture;
+      candidateCount = 1;
+    }
+    if(candidateCount >= stableFramesRequired){
+  stableGesture = gesture;
+} return stableGesture;
+ }
+ 
   async function loadHandTracker() {
-    status.textContent = "Loading hand tracker...";
+    gestureStatus.textContent = "Loading hand tracker...";
 
     try {
       const vision = await FilesetResolver.forVisionTasks(
@@ -127,17 +407,17 @@
 
       handLandmarker = await HandLandmarker.createFromOptions(vision, {
         baseOptions: {
-          modelAssetPath: "./models/hand_landmarker.task"
+          modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
         },
         runningMode: "VIDEO",
         numHands: 2
       });
 
-      status.textContent = "Hand tracker ready. Camera is off.";
+      gestureStatus.textContent = "Hand tracker ready. Camera is off.";
       startButton.textContent = "Start Camera";
       startButton.disabled = false;
     } catch (error) {
-      status.textContent =
+      gestureStatus.textContent =
         `Tracker error: ${error.name} — ${error.message}`;
       console.error(error);
     }
@@ -156,13 +436,13 @@
       startButton.disabled = true;
       stopButton.disabled = false;
     } catch (error) {
-      status.textContent =
-        `Camera error: ${error.name} — ${error.message}`;
-      console.error(error);
-    }
+  Status.textContent = `Camera error: ${error.name} — ${error.message}`;
+  console.error(error);
+}
   });
 
   stopButton.addEventListener("click", () => {
+    music.pause();
     if (frameRequest){
         cancelAnimationFrame(frameRequest);
         frameRequest = null;
@@ -174,13 +454,38 @@
       cameraStream = null;
     }
 
-    status.textContent = "Camera is off.";
+    Status.textContent = "Camera is off.";
     startButton.disabled = false;
     stopButton.disabled = true;
   });
+async function runGestureAction(gesture) {
+  if (gesture === "Open hand") {
+    try {
+      await music.play();
+      demoMessage.textContent = "Playing music";
+    } catch (error) {
+      demoMessage.textContent =
+        `Playback blocked (${error.name}). Click Play in the audio controls, then try again.`;
+    }
+  } else if (gesture === "Fist") {
+    music.pause();
+    demoMessage.textContent = "Music paused";
+  } else if (gesture === "Swipe right") {
+    music.currentTime = Math.min(music.currentTime + 10, music.duration || Infinity);
+    demoMessage.textContent = "Skipped forward 10 seconds";
+  } else if (gesture === "Swipe left") {
+    music.currentTime = Math.max(0, music.currentTime - 10);
+    demoMessage.textContent = "Went back 10 seconds";
+  } else {
+    return;
+  }
 
+  demoMessage.hidden = false;
+}
   loadHandTracker();
   function detectHands() {
+   
+    
   if (!cameraStream || !handLandmarker) return;
 
   if (video.readyState >= 2 && video.currentTime !== lastVideoTime) {
@@ -194,25 +499,76 @@
 
     // Each detected hand has 21 points with x and y values from 0 to 1.
     for (const hand of result.landmarks) {
-      for (const point of hand) {
-        const x = point.x * canvas.width;
-        const y = point.y * canvas.height;
+  // Draw the lines first.
+  context.strokeStyle = "#42d4d4";
+  context.lineWidth = 3;
 
-        context.beginPath();
-        context.arc(x, y, 6, 0, Math.PI * 2);
-        context.fillStyle = "#ffffff";
-        context.fill();
-      }
-    }
+  for (const [startIndex, endIndex] of connections) {
+    const start = hand[startIndex];
+    const end = hand[endIndex];
 
-    status.textContent = result.landmarks.length
+    context.beginPath();
+    context.moveTo(start.x * canvas.width, start.y * canvas.height);
+    context.lineTo(end.x * canvas.width, end.y * canvas.height);
+    context.stroke();
+  }
+
+  // Draw the landmark dots on top of the lines.
+  for (const point of hand) {
+    const x = point.x * canvas.width;
+    const y = point.y * canvas.height;
+
+    context.beginPath();
+    context.arc(x, y, 6, 0, Math.PI * 2);
+    context.fillStyle = "#ffffff";
+    context.fill();
+  }
+}
+
+    Status.textContent = result.landmarks.length
       ? `Camera on — detected ${result.landmarks.length} hand(s).`
       : "Camera on — show your hand to the camera.";
 
-    lastVideoTime = video.currentTime;
+    if (result.landmarks.length > 0) {
+  const hand = result.landmarks[0];
+  
+  if (checkForDoublePinch(hand)) {
+    stopButton.click();
+    return;
   }
 
-  frameRequest = requestAnimationFrame(detectHands);
+
+
+const swipeGesture = detectSwipe(hand);
+
+if (swipeGesture) {
+  runGestureAction(swipeGesture);
+  gestureStatus.textContent = `Gesture: ${swipeGesture}`;
+  candidateGesture = "";
+  candidateCount = 0;
+} else {
+  const rawGesture = classifyHand(hand);
+  const confirmedGesture = stabilizeGesture(rawGesture);
+
+  gestureStatus.textContent = `Pose: ${confirmedGesture}`;
+
+  if (confirmedGesture !== lastCommandGesture) {
+    lastCommandGesture = confirmedGesture;
+    runGestureAction(confirmedGesture);
+  }
+}
+
+  lastVideoTime = video.currentTime;
+} else {
+  wasPinched = false;
+  swipeStartX = null;
+  candidateGesture = "";
+  candidateCount = 0;
+  stableGesture = "Waiting for a hand";
+  gestureStatus.textContent = stableGesture;
+}
+
+  frameRequest = requestAnimationFrame(detectHands);}
 }
 </script>
 </body>
