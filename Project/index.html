@@ -203,6 +203,59 @@ button:disabled {
     width: min(100%, 250px);
   }
 }
+.gesture-guide {
+  max-width: 760px;
+  margin: 0 auto 24px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  text-align: left;
+}
+
+.gesture-guide h2 {
+  margin: 0 0 14px;
+  color: var(--text);
+  font-size: 18px;
+  text-align: center;
+}
+
+.gesture-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gesture-list li {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.gesture-list strong,
+.gesture-list span {
+  display: block;
+}
+
+.gesture-list strong {
+  margin-bottom: 5px;
+  color: #f2f2f2;
+}
+
+.gesture-list span,
+.gesture-guide > p {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.gesture-guide > p {
+  margin: 14px 0 0;
+  text-align: center;
+}
 </style>
 
 
@@ -225,6 +278,17 @@ button:disabled {
 
 
 <main class="card">
+  <section class="gesture-guide">
+  <h2>Gesture Controls</h2>
+  <ul class="gesture-list">
+    <li><strong>Open palm</strong><span>Play or resume music</span></li>
+    <li><strong>Fist</strong><span>Pause music</span></li>
+    <li><strong>Swipe right</strong><span>Skip forward 10 seconds</span></li>
+    <li><strong>Swipe left</strong><span>Go back 10 seconds</span></li>
+    <li><strong>Pinch twice</strong><span>Stop the camera</span></li>
+  </ul>
+  <p>For swipes, move your extended index and middle fingers across the camera view.</p>
+</section>
     <div class="camera-box">
        <video id="camera" autoplay playsinline ></video>
        <canvas id="overlay"></canvas>
