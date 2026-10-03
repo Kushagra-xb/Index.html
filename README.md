@@ -4,11 +4,6 @@ A beginner-friendly web prototype that uses a live camera feed and MediaPipe Han
 
 > **Current scope:** This project detects hand landmarks in real time. It does not recognize signs or translate sign language into English yet.
 
-## Screenshot
-
-![Sign to Text showing detected hand landmarks](Project/screenshot.png)
-
-To add the screenshot, run the project, show your hand so the landmark dots are visible, take a screenshot, and save it as `Project/screenshot.png`.
 
 ## Run locally
 
