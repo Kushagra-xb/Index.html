@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><style>
+    html, body {
+        min-height: 100%;
+        background: #121212;
+        color: #f3ebeb;
+    }
+    body 
+{       
+        font-family: Roboto, sans-serif;
+       text-align: center;
+        margin: 0;
+       padding: 40px 20px;
+       
+    }
+    h1 { font-size: 36px;
+        color: #cb3131
+    }
+    .card {
+        padding: 24px;;
+        
+        color: #efd45b;
+       
+    }
+    video {
+        display:block;
+        width:100%;
+        max-width: 480px;
+        margin:24px auto;
+        border: 2px solid #42d4d4;
+        border-radius: 12px;
+        background: #222;
+
+    }
+    button {
+        padding: 12px 18px;
+        margin:6px;
+        border:0;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .camera-box {
+        position:relative;
+        width:100%;
+        max-width:720px;
+        margin:24px auto;
+
+    }
+    .camera-box video, .camera-box canvas {
+        display:block;
+        width:100%;
+        border-radius:12px;
+
+    }
+    .camera-box canvas{
+        position:absolute;
+        inset:0;
+        pointer-events:none;
+    }
+    .camera-box video{
+        margin:0;
+        max-width:none;
+        box-sizing:border-box;
+    }
+</style>
+
+
+
+
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign to Text</title>
+</head>
+
+
+<body> 
+    <h1><b>Sign to Text</b></h1>
+    <p>Convert sign language to text in real-time.</p>
+
+
+
+
+<main class="card">
+    <div class="camera-box">
+       <video id="camera" autoplay playsinline ></video>
+       <canvas id="overlay"></canvas>
+    </div>
+    <div>
+       <button id="startButton" disabled>Loading tracker...</button>
+        <button id="stopButton" disabled>Stop Camera</button>
+    </div>
+    <p id="Status">Camera is off.</p>
+    
+</main>
+
+
+<script type="module">
+  import {
+    FilesetResolver,
+    HandLandmarker
+  } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/vision_bundle.mjs";
+
+  const canvas = document.getElementById("overlay");
+  const context = canvas.getContext("2d");
+  const video = document.getElementById("camera");
+  const status = document.getElementById("Status");
+  const startButton = document.getElementById("startButton");
+  const stopButton = document.getElementById("stopButton");
+
+  let cameraStream = null;
+  let handLandmarker = null;
+  let frameRequest = null;
+  let lastVideoTime = -1;
+
+  async function loadHandTracker() {
+    status.textContent = "Loading hand tracker...";
+
+    try {
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
+      );
+
+      handLandmarker = await HandLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: "./models/hand_landmarker.task"
+        },
+        runningMode: "VIDEO",
+        numHands: 2
+      });
+
+      status.textContent = "Hand tracker ready. Camera is off.";
+      startButton.textContent = "Start Camera";
+      startButton.disabled = false;
+    } catch (error) {
+      status.textContent =
+        `Tracker error: ${error.name} — ${error.message}`;
+      console.error(error);
+    }
+  }
+
+  startButton.addEventListener("click", async () => {
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false
+      });
+
+      video.srcObject = cameraStream;
+     await video.play();
+     detectHands();
+      startButton.disabled = true;
+      stopButton.disabled = false;
+    } catch (error) {
+      status.textContent =
+        `Camera error: ${error.name} — ${error.message}`;
+      console.error(error);
+    }
+  });
+
+  stopButton.addEventListener("click", () => {
+    if (frameRequest){
+        cancelAnimationFrame(frameRequest);
+        frameRequest = null;
+    }
+    context.clearRect(0,0,canvas.width,canvas.height);
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      video.srcObject = null;
+      cameraStream = null;
+    }
+
+    status.textContent = "Camera is off.";
+    startButton.disabled = false;
+    stopButton.disabled = true;
+  });
+
+  loadHandTracker();
+  function detectHands() {
+  if (!cameraStream || !handLandmarker) return;
+
+  if (video.readyState >= 2 && video.currentTime !== lastVideoTime) {
+    // Match the canvas drawing resolution to the camera's actual frame size.
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const result = handLandmarker.detectForVideo(video, performance.now());
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Each detected hand has 21 points with x and y values from 0 to 1.
+    for (const hand of result.landmarks) {
+      for (const point of hand) {
+        const x = point.x * canvas.width;
+        const y = point.y * canvas.height;
+
+        context.beginPath();
+        context.arc(x, y, 6, 0, Math.PI * 2);
+        context.fillStyle = "#ffffff";
+        context.fill();
+      }
+    }
+
+    status.textContent = result.landmarks.length
+      ? `Camera on — detected ${result.landmarks.length} hand(s).`
+      : "Camera on — show your hand to the camera.";
+
+    lastVideoTime = video.currentTime;
+  }
+
+  frameRequest = requestAnimationFrame(detectHands);
+}
+</script>
+</body>
+</html>
